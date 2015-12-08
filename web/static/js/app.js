@@ -18,7 +18,6 @@ class App {
     })
 
     channel.on("key_press", payload => {
-      console.log("Payload: " + payload.body)
       var parts = payload.body.split(":")
       piano.play(parts[0], parts[1], 2);
     })

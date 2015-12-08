@@ -2,7 +2,7 @@ defmodule Keyboard.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "rooms:*", Keyboard.RoomChannel
+  channel "keys:*", Keyboard.KeysChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

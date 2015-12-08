@@ -1,36 +1,30 @@
 <div class="jumbotron">
-  <h2>Welcome to Phoenix!</h2>
-  <p class="lead">A productive web framework that<br />does not compromise speed and maintainability.</p>
+<h2>play the keyboard with the internet</h2>
 </div>
 
 <div class="row marketing">
   <div class="col-lg-6">
-    <h4>Resources</h4>
-    <ul>
-      <li>
-        <a href="http://phoenixframework.org/docs/overview">Guides</a>
-      </li>
-      <li>
-        <a href="http://hexdocs.pm/phoenix">Docs</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix">Source</a>
-      </li>
-    </ul>
-  </div>
-
-  <div class="col-lg-6">
-    <h4>Help</h4>
-    <ul>
-      <li>
-        <a href="http://groups.google.com/group/phoenix-talk">Mailing list</a>
-      </li>
-      <li>
-        <a href="http://webchat.freenode.net/?channels=elixir-lang">#elixir-lang on freenode IRC</a>
-      </li>
-      <li>
-        <a href="https://twitter.com/elixirphoenix">@elixirphoenix</a>
-      </li>
-    </ul>
+    <div id="kbd">
+      <div id="keys">
+        <div id="C:4" class="note white"></div>
+        <div id="C#:4" class="note black"></div>
+        <div id="D:4" class="note white"></div>
+        <div id="D#:4" class="note black"></div>
+        <div id="E:4" class="note white"></div>
+        <div id="F:4" class="note white"></div>
+        <div id="F#:4" class="note black"></div>
+        <div id="G:4" class="note white"></div>
+        <div id="G#:4" class="note black"></div>
+        <div id="A:4" class="note white"></div>
+        <div id="A#:4" class="note black"></div>
+        <div id="B:4" class="note white"></div>
+        <div id="C:5" class="note white"></div>
+        <div id="C#:5" class="note black"></div>
+        <div id="D:5" class="note white"></div>
+        <div id="D#:5" class="note black"></div>
+        <div id="E:5" class="note white"></div>
+        <div id="F:5" class="note white"></div>
+      </div>
+    </div>
   </div>
 </div>

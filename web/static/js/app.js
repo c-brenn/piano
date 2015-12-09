@@ -12,9 +12,14 @@ class App {
     let keys = $("#keys");
     let Synth = AudioSynth();
     var piano = Synth.createInstrument('piano');
+    var timer = false;
     keys.on('click', '> *', function() {
-      var id = $(this).attr('id');
-      channel.push("key_press", {body: id})
+      if(!timer) {
+        timer = true;
+        var id = $(this).attr('id');
+        channel.push("key_press", {body: id})
+        setTimeout(function(){ timer = false;}, 300);
+      }
     })
 
     channel.on("key_press", payload => {

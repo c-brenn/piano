@@ -2,29 +2,10 @@
 <h2>play the keyboard with the internet</h2>
 </div>
 
-<div class="row marketing">
-  <div class="col-lg-6">
-    <div id="kbd">
-      <div id="keys">
-        <div id="C:4" class="note white"></div>
-        <div id="C#:4" class="note black"></div>
-        <div id="D:4" class="note white"></div>
-        <div id="D#:4" class="note black"></div>
-        <div id="E:4" class="note white"></div>
-        <div id="F:4" class="note white"></div>
-        <div id="F#:4" class="note black"></div>
-        <div id="G:4" class="note white"></div>
-        <div id="G#:4" class="note black"></div>
-        <div id="A:4" class="note white"></div>
-        <div id="A#:4" class="note black"></div>
-        <div id="B:4" class="note white"></div>
-        <div id="C:5" class="note white"></div>
-        <div id="C#:5" class="note black"></div>
-        <div id="D:5" class="note white"></div>
-        <div id="D#:5" class="note black"></div>
-        <div id="E:5" class="note white"></div>
-        <div id="F:5" class="note white"></div>
-      </div>
-    </div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div id="elm-main" class="keyboard"></div>
   </div>
 </div>
+

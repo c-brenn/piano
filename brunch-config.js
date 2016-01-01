@@ -42,7 +42,8 @@ exports.config = {
       "deps/phoenix/web/static",
       "deps/phoenix_html/web/static",
       "web/static",
-      "test/static"
+      "test/static",
+      "web/elm"
     ],
 
     // Where to compile files to
@@ -51,6 +52,11 @@ exports.config = {
 
   // Configure your plugins
   plugins: {
+    elmBrunch: {
+      elmFolder: 'web/elm',
+      mainModules: ['KeyBoard.elm'],
+      outputFolder: '../static/vendor'
+    },
     babel: {
       // Do not use ES6 compiler in vendor code
       ignore: [/web\/static\/vendor/]
@@ -65,5 +71,13 @@ exports.config = {
 
   npm: {
     enabled: true
+  },
+
+  overrides: {
+      production: {
+        plugins: {
+          off: ['elm-brunch']
+        }
+      }
   }
 };

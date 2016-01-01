@@ -43,7 +43,7 @@ exports.config = {
       "deps/phoenix_html/web/static",
       "web/static",
       "test/static",
-      "web/elm"
+      "web/elm/KeyBoard.elm"
     ],
 
     // Where to compile files to

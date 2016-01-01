@@ -10678,6 +10678,65 @@ Elm.StartApp.make = function (_elm) {
    var Config = F4(function (a,b,c,d) {    return {init: a,update: b,view: c,inputs: d};});
    return _elm.StartApp.values = {_op: _op,start: start,Config: Config,App: App};
 };
+Elm.Key = Elm.Key || {};
+Elm.Key.make = function (_elm) {
+   "use strict";
+   _elm.Key = _elm.Key || {};
+   if (_elm.Key.values) return _elm.Key.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var keyState = function (state) {    var _p0 = state;if (_p0.ctor === "Released") {    return "";} else {    return "animated pulse";}};
+   var keyColour = function (colour) {    var _p1 = colour;if (_p1.ctor === "White") {    return "white";} else {    return "black";}};
+   var keyClass = function (model) {
+      return $Html$Attributes.$class(A2($Basics._op["++"],
+      "note ",
+      A2($Basics._op["++"],keyColour(model.colour),A2($Basics._op["++"]," ",keyState(model.state)))));
+   };
+   var Release = {ctor: "Release"};
+   var Press = {ctor: "Press"};
+   var view = F3(function (address,model,keyId) {
+      return A2($Html.div,_U.list([keyClass(model),A2($Html$Events.onClick,address,Press),$Html$Attributes.id(keyId)]),_U.list([$Html.text(model.text)]));
+   });
+   var Model = F3(function (a,b,c) {    return {colour: a,state: b,text: c};});
+   var Released = {ctor: "Released"};
+   var Pressed = {ctor: "Pressed"};
+   var update = F2(function (action,model) {
+      var _p2 = action;
+      if (_p2.ctor === "Press") {
+            return _U.update(model,{state: Pressed});
+         } else {
+            return _U.update(model,{state: Released});
+         }
+   });
+   var Black = {ctor: "Black"};
+   var White = {ctor: "White"};
+   var parseColour = function (str) {    var _p3 = str;if (_p3 === "white") {    return White;} else {    return Black;}};
+   var init = function (_p4) {    var _p5 = _p4;return {colour: parseColour(_p5._0),state: Released,text: _p5._1};};
+   return _elm.Key.values = {_op: _op
+                            ,White: White
+                            ,Black: Black
+                            ,Pressed: Pressed
+                            ,Released: Released
+                            ,Model: Model
+                            ,init: init
+                            ,parseColour: parseColour
+                            ,Press: Press
+                            ,Release: Release
+                            ,update: update
+                            ,view: view
+                            ,keyClass: keyClass
+                            ,keyColour: keyColour
+                            ,keyState: keyState};
+};
 Elm.KeyBoard = Elm.KeyBoard || {};
 Elm.KeyBoard.make = function (_elm) {
    "use strict";
@@ -10689,7 +10748,7 @@ Elm.KeyBoard.make = function (_elm) {
    $Effects = Elm.Effects.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
+   $Key = Elm.Key.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
@@ -10702,50 +10761,39 @@ Elm.KeyBoard.make = function (_elm) {
    function (v) {
       return typeof v === "string" || typeof v === "object" && v instanceof String ? v : _U.badPort("a string",v);
    });
-   var stateClass = function (state) {    var _p0 = state;if (_p0.ctor === "Released") {    return "";} else {    return "animated pulse";}};
-   var keyColour = function (colour) {    var _p1 = colour;if (_p1.ctor === "White") {    return "white";} else {    return "black";}};
-   var keyClass = function (_p2) {    var _p3 = _p2;return A2($Basics._op["++"],keyColour(_p3.colour),A2($Basics._op["++"]," ",stateClass(_p3.state)));};
-   var Press = function (a) {    return {ctor: "Press",_0: a};};
-   var keyView = F2(function (address,key) {
-      return A2($Html.li,
-      _U.list([$Html$Attributes.$class(A2($Basics._op["++"],"note ",keyClass(key)))
-              ,$Html$Attributes.id(key.note)
-              ,A2($Html$Events.onClick,address,Press(key.note))]),
-      _U.list([$Html.text(key.text)]));
-   });
-   var view = F2(function (address,model) {    return A2($Html.ul,_U.list([$Html$Attributes.$class("keys")]),A2($List.map,keyView(address),model));});
-   var incomingActions = A2($Signal.map,Press,keyEvents);
-   var Key = F4(function (a,b,c,d) {    return {note: a,colour: b,state: c,text: d};});
-   var Released = {ctor: "Released"};
-   var initKey = function (_p4) {    var _p5 = _p4;return {note: _p5._0,colour: _p5._1,state: Released,text: _p5._2};};
-   var Pressed = {ctor: "Pressed"};
    var update = F2(function (action,model) {
-      var _p6 = action;
-      var updateKey = function (keyFromModel) {
-         return _U.eq(_p6._0,keyFromModel.note) ? _U.update(keyFromModel,{state: Pressed}) : _U.update(keyFromModel,{state: Released});
+      var _p0 = action;
+      var updateKey = function (_p1) {
+         var _p2 = _p1;
+         var _p4 = _p2._1;
+         var _p3 = _p2._0;
+         return _U.eq(_p3,_p0._0) ? {ctor: "_Tuple2",_0: _p3,_1: A2($Key.update,_p0._1,_p4)} : {ctor: "_Tuple2",_0: _p3,_1: A2($Key.update,$Key.Release,_p4)};
       };
       return {ctor: "_Tuple2",_0: A2($List.map,updateKey,model),_1: $Effects.none};
    });
-   var White = {ctor: "White"};
-   var Black = {ctor: "Black"};
-   var playableKeys = _U.list([{ctor: "_Tuple3",_0: "C:4",_1: White,_2: "a"}
-                              ,{ctor: "_Tuple3",_0: "C#:4",_1: Black,_2: "w"}
-                              ,{ctor: "_Tuple3",_0: "D:4",_1: White,_2: "s"}
-                              ,{ctor: "_Tuple3",_0: "D#:4",_1: Black,_2: "e"}
-                              ,{ctor: "_Tuple3",_0: "E:4",_1: White,_2: "d"}
-                              ,{ctor: "_Tuple3",_0: "F:4",_1: White,_2: "f"}
-                              ,{ctor: "_Tuple3",_0: "F#:4",_1: Black,_2: "t"}
-                              ,{ctor: "_Tuple3",_0: "G:4",_1: White,_2: "g"}
-                              ,{ctor: "_Tuple3",_0: "G#:4",_1: Black,_2: "y"}
-                              ,{ctor: "_Tuple3",_0: "A:4",_1: White,_2: "h"}
-                              ,{ctor: "_Tuple3",_0: "A#:4",_1: Black,_2: "u"}
-                              ,{ctor: "_Tuple3",_0: "B:4",_1: White,_2: "j"}
-                              ,{ctor: "_Tuple3",_0: "C:5",_1: White,_2: "k"}
-                              ,{ctor: "_Tuple3",_0: "C#:5",_1: Black,_2: "o"}
-                              ,{ctor: "_Tuple3",_0: "D:5",_1: White,_2: "l"}
-                              ,{ctor: "_Tuple3",_0: "D#:5",_1: Black,_2: "p"}
-                              ,{ctor: "_Tuple3",_0: "E:5",_1: White,_2: ";"}
-                              ,{ctor: "_Tuple3",_0: "F:5",_1: White,_2: "\'"}]);
+   var Press = F2(function (a,b) {    return {ctor: "Press",_0: a,_1: b};});
+   var viewKey = F2(function (address,_p5) {    var _p6 = _p5;var _p7 = _p6._0;return A3($Key.view,A2($Signal.forwardTo,address,Press(_p7)),_p6._1,_p7);});
+   var view = F2(function (address,model) {    return A2($Html.ul,_U.list([$Html$Attributes.$class("keys")]),A2($List.map,viewKey(address),model));});
+   var incomingActions = A2($Signal.map,function (keyId) {    return A2(Press,keyId,$Key.Press);},keyEvents);
+   var playableKeys = _U.list([{ctor: "_Tuple3",_0: "C:4",_1: "white",_2: "a"}
+                              ,{ctor: "_Tuple3",_0: "C#:4",_1: "black",_2: "w"}
+                              ,{ctor: "_Tuple3",_0: "D:4",_1: "white",_2: "s"}
+                              ,{ctor: "_Tuple3",_0: "D#:4",_1: "black",_2: "e"}
+                              ,{ctor: "_Tuple3",_0: "E:4",_1: "white",_2: "d"}
+                              ,{ctor: "_Tuple3",_0: "F:4",_1: "white",_2: "f"}
+                              ,{ctor: "_Tuple3",_0: "F#:4",_1: "black",_2: "t"}
+                              ,{ctor: "_Tuple3",_0: "G:4",_1: "white",_2: "g"}
+                              ,{ctor: "_Tuple3",_0: "G#:4",_1: "black",_2: "y"}
+                              ,{ctor: "_Tuple3",_0: "A:4",_1: "white",_2: "h"}
+                              ,{ctor: "_Tuple3",_0: "A#:4",_1: "black",_2: "u"}
+                              ,{ctor: "_Tuple3",_0: "B:4",_1: "white",_2: "j"}
+                              ,{ctor: "_Tuple3",_0: "C:5",_1: "white",_2: "k"}
+                              ,{ctor: "_Tuple3",_0: "C#:5",_1: "black",_2: "o"}
+                              ,{ctor: "_Tuple3",_0: "D:5",_1: "white",_2: "l"}
+                              ,{ctor: "_Tuple3",_0: "D#:5",_1: "black",_2: "p"}
+                              ,{ctor: "_Tuple3",_0: "E:5",_1: "white",_2: ";"}
+                              ,{ctor: "_Tuple3",_0: "F:5",_1: "white",_2: "\'"}]);
+   var initKey = function (_p8) {    var _p9 = _p8;return {ctor: "_Tuple2",_0: _p9._0,_1: $Key.init({ctor: "_Tuple2",_0: _p9._1,_1: _p9._2})};};
    var init = function () {    var keys = A2($List.map,initKey,playableKeys);return {ctor: "_Tuple2",_0: keys,_1: $Effects.none};}();
    var app = $StartApp.start({init: init,update: update,view: view,inputs: _U.list([incomingActions])});
    var main = app.html;
@@ -10753,20 +10801,12 @@ Elm.KeyBoard.make = function (_elm) {
    return _elm.KeyBoard.values = {_op: _op
                                  ,app: app
                                  ,main: main
-                                 ,Black: Black
-                                 ,White: White
-                                 ,Pressed: Pressed
-                                 ,Released: Released
-                                 ,Key: Key
-                                 ,initKey: initKey
                                  ,init: init
+                                 ,initKey: initKey
                                  ,playableKeys: playableKeys
                                  ,Press: Press
                                  ,update: update
                                  ,view: view
-                                 ,keyView: keyView
-                                 ,keyClass: keyClass
-                                 ,keyColour: keyColour
-                                 ,stateClass: stateClass
+                                 ,viewKey: viewKey
                                  ,incomingActions: incomingActions};
 };

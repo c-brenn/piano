@@ -1,19 +1,20 @@
 module KeyBoard where
 
+import Key
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import StartApp
 import Effects exposing (Effects, Never)
 import Task exposing (Task)
-import Html exposing (..)
-import Html.Attributes exposing (class, id)
-import Html.Events exposing(onClick)
 
 app =
   StartApp.start
-  { init = init
-  , update = update
-  , view = view
-  , inputs = [incomingActions]
-  }
+    { init = init
+    , update = update
+    , view = view
+    , inputs = [incomingActions]
+    }
 
 main : Signal Html
 main =
@@ -21,99 +22,77 @@ main =
 
 port tasks : Signal (Task Never ())
 port tasks =
-  app.tasks
--- MODEL
+   app.tasks
 
-type Colour = Black | White
-type State = Pressed | Released
-
-type alias Key =
-  { note : String
-  , colour : Colour
-  , state : State
-  , text  : String
-  }
-
-initKey : (String, Colour, String) -> Key
-initKey (n, c, t)=
-    { note = n
-    , colour = c
-    , state = Released
-    , text = t
-    }
+-- Model
 
 type alias Model =
-  List Key
+  List (ID, Key.Model)
+
+type alias ID = String
 
 init : (Model, Effects Action)
 init =
     let keys = List.map initKey playableKeys
-    in (keys, Effects.none)
+    in
+        (keys, Effects.none)
+
+initKey : (String, String, String) -> (ID, Key.Model)
+initKey (id, colour, text) =
+    (id, Key.init (colour, text))
 
 playableKeys =
   [
-    ("C:4"  , White, "a"),
-    ("C#:4" , Black, "w"),
-    ("D:4"  , White, "s"),
-    ("D#:4" , Black, "e"),
-    ("E:4"  , White, "d"),
-    ("F:4"  , White, "f"),
-    ("F#:4" , Black, "t"),
-    ("G:4"  , White, "g"),
-    ("G#:4" , Black, "y"),
-    ("A:4"  , White, "h"),
-    ("A#:4" , Black, "u"),
-    ("B:4"  , White, "j"),
-    ("C:5"  , White, "k"),
-    ("C#:5" , Black, "o"),
-    ("D:5"  , White, "l"),
-    ("D#:5" , Black, "p"),
-    ("E:5"  , White, ";"),
-    ("F:5"  , White, "'")
+    ("C:4"  , "white", "a"),
+    ("C#:4" , "black", "w"),
+    ("D:4"  , "white", "s"),
+    ("D#:4" , "black", "e"),
+    ("E:4"  , "white", "d"),
+    ("F:4"  , "white", "f"),
+    ("F#:4" , "black", "t"),
+    ("G:4"  , "white", "g"),
+    ("G#:4" , "black", "y"),
+    ("A:4"  , "white", "h"),
+    ("A#:4" , "black", "u"),
+    ("B:4"  , "white", "j"),
+    ("C:5"  , "white", "k"),
+    ("C#:5" , "black", "o"),
+    ("D:5"  , "white", "l"),
+    ("D#:5" , "black", "p"),
+    ("E:5"  , "white", ";"),
+    ("F:5"  , "white", "'")
     ]
 
--- UPDATE
-type Action = Press String
+-- Update
+
+type Action = Press ID Key.Action
 
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
-    Press keyToPress ->
-      let
-          updateKey keyFromModel =
-            if keyToPress == keyFromModel.note then
-              { keyFromModel | state = Pressed }
-            else { keyFromModel | state = Released }
-      in (List.map updateKey model, Effects.none)
+    Press id keyAction ->
+      let updateKey (keyId, keyModel) =
+            if keyId == id then
+              (keyId, Key.update keyAction keyModel)
+            else
+              (keyId, Key.update Key.Release keyModel)
+      in
+        (List.map updateKey model, Effects.none)
 
--- VIEW
-
+-- View
 view : Signal.Address Action -> Model -> Html
 view address model =
-  ul [ class "keys" ] (List.map (keyView address) model)
+  ul
+  [ class "keys" ]
+  (List.map (viewKey address) model)
 
-keyView : Signal.Address Action -> Key -> Html
-keyView address key =
-  li [class ("note " ++ (keyClass key)), id (key.note), onClick address (Press key.note)] [text key.text]
-
-keyClass : Key -> String
-keyClass { note, colour, state} = (keyColour colour) ++ " "++ stateClass state
-
-keyColour : Colour -> String
-keyColour colour =
-  case colour of
-    White -> "white"
-    Black -> "black"
-
-stateClass : State -> String
-stateClass state =
-  case state of
-    Released -> ""
-    Pressed -> "animated pulse"
+viewKey : Signal.Address Action -> (ID, Key.Model) -> Html
+viewKey address (id, model) =
+  Key.view (Signal.forwardTo address (Press id)) model id
 
 -- SIGNALS
 port keyEvents : Signal String
 
 incomingActions : Signal Action
 incomingActions =
-    Signal.map Press keyEvents
+    Signal.map (\keyId -> Press keyId Key.Press) keyEvents

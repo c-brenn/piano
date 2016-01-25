@@ -1,5 +1,5 @@
 var elmDiv = document.getElementById('elm-main')
-  , initialState = {keyEvents: ""}
+  , initialState = {keyPresses: "", keyReleases: ""}
   , elmApp = Elm.embed(Elm.KeyBoard, elmDiv, initialState);
 
 import {Socket, LongPoller} from "phoenix"
@@ -43,7 +43,7 @@ class App {
       key.click()
     })
 
-    // throttle the numbe rof allowed key pressed to 3 a second
+    // throttle the number of allowed key pressed to 3 a second
     var pressTimer = false;
     keys.on('click', '> *', function() {
       if(!pressTimer) {
@@ -57,15 +57,13 @@ class App {
     channel.on("key_press", payload => {
       var parts = payload.body.split(":")
       piano.play(parts[0], parts[1], 2)
-      elmApp.ports.keyEvents.send(payload.body);
+      elmApp.ports.keyPresses.send(payload.body);
+      setTimeout(() => elmApp.ports.keyReleases.send(payload.body), 200);
     })
 
     channel.join()
   }
 }
 $( () => App.init() )
-
-// release all keys every half a second (dirty hack)
-setInterval( () => elmApp.ports.keyEvents.send(""), 500)
 
 export default App

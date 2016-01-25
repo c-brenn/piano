@@ -55,7 +55,6 @@ view : Signal.Address Action -> Model -> String -> Html
 view address model keyId =
   div
     [ keyClass model
-    , onClick address Press
     , id keyId
     ]
     [ text model.text ]

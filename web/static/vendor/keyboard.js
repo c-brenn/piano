@@ -10688,7 +10688,6 @@ Elm.Key.make = function (_elm) {
    $Debug = Elm.Debug.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
@@ -10701,11 +10700,11 @@ Elm.Key.make = function (_elm) {
       "note ",
       A2($Basics._op["++"],keyColour(model.colour),A2($Basics._op["++"]," ",keyState(model.state)))));
    };
+   var view = F3(function (address,model,keyId) {
+      return A2($Html.div,_U.list([keyClass(model),$Html$Attributes.id(keyId)]),_U.list([$Html.text(model.text)]));
+   });
    var Release = {ctor: "Release"};
    var Press = {ctor: "Press"};
-   var view = F3(function (address,model,keyId) {
-      return A2($Html.div,_U.list([keyClass(model),A2($Html$Events.onClick,address,Press),$Html$Attributes.id(keyId)]),_U.list([$Html.text(model.text)]));
-   });
    var Model = F3(function (a,b,c) {    return {colour: a,state: b,text: c};});
    var Released = {ctor: "Released"};
    var Pressed = {ctor: "Pressed"};
@@ -10756,7 +10755,12 @@ Elm.KeyBoard.make = function (_elm) {
    $StartApp = Elm.StartApp.make(_elm),
    $Task = Elm.Task.make(_elm);
    var _op = {};
-   var keyEvents = Elm.Native.Port.make(_elm).inboundSignal("keyEvents",
+   var keyReleases = Elm.Native.Port.make(_elm).inboundSignal("keyReleases",
+   "String",
+   function (v) {
+      return typeof v === "string" || typeof v === "object" && v instanceof String ? v : _U.badPort("a string",v);
+   });
+   var keyPresses = Elm.Native.Port.make(_elm).inboundSignal("keyPresses",
    "String",
    function (v) {
       return typeof v === "string" || typeof v === "object" && v instanceof String ? v : _U.badPort("a string",v);
@@ -10767,14 +10771,18 @@ Elm.KeyBoard.make = function (_elm) {
          var _p2 = _p1;
          var _p4 = _p2._1;
          var _p3 = _p2._0;
-         return _U.eq(_p3,_p0._0) ? {ctor: "_Tuple2",_0: _p3,_1: A2($Key.update,_p0._1,_p4)} : {ctor: "_Tuple2",_0: _p3,_1: A2($Key.update,$Key.Release,_p4)};
+         return _U.eq(_p3,_p0._0) ? {ctor: "_Tuple2",_0: _p3,_1: A2($Key.update,_p0._1,_p4)} : {ctor: "_Tuple2",_0: _p3,_1: _p4};
       };
       return {ctor: "_Tuple2",_0: A2($List.map,updateKey,model),_1: $Effects.none};
    });
-   var Press = F2(function (a,b) {    return {ctor: "Press",_0: a,_1: b};});
-   var viewKey = F2(function (address,_p5) {    var _p6 = _p5;var _p7 = _p6._0;return A3($Key.view,A2($Signal.forwardTo,address,Press(_p7)),_p6._1,_p7);});
+   var Event = F2(function (a,b) {    return {ctor: "Event",_0: a,_1: b};});
+   var viewKey = F2(function (address,_p5) {    var _p6 = _p5;var _p7 = _p6._0;return A3($Key.view,A2($Signal.forwardTo,address,Event(_p7)),_p6._1,_p7);});
    var view = F2(function (address,model) {    return A2($Html.ul,_U.list([$Html$Attributes.$class("keys")]),A2($List.map,viewKey(address),model));});
-   var incomingActions = A2($Signal.map,function (keyId) {    return A2(Press,keyId,$Key.Press);},keyEvents);
+   var incomingActions = function () {
+      var releases = A2($Signal.map,function (keyId) {    return A2(Event,keyId,$Key.Release);},keyReleases);
+      var presses = A2($Signal.map,function (keyId) {    return A2(Event,keyId,$Key.Press);},keyPresses);
+      return A2($Signal.merge,presses,releases);
+   }();
    var playableKeys = _U.list([{ctor: "_Tuple3",_0: "C:4",_1: "white",_2: "a"}
                               ,{ctor: "_Tuple3",_0: "C#:4",_1: "black",_2: "w"}
                               ,{ctor: "_Tuple3",_0: "D:4",_1: "white",_2: "s"}
@@ -10804,7 +10812,7 @@ Elm.KeyBoard.make = function (_elm) {
                                  ,init: init
                                  ,initKey: initKey
                                  ,playableKeys: playableKeys
-                                 ,Press: Press
+                                 ,Event: Event
                                  ,update: update
                                  ,view: view
                                  ,viewKey: viewKey

@@ -65,17 +65,18 @@ playableKeys =
 
 -- Update
 
-type Action = Press ID Key.Action
+type Action
+  = Event ID Key.Action
 
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
-    Press id keyAction ->
+    Event id keyAction ->
       let updateKey (keyId, keyModel) =
             if keyId == id then
               (keyId, Key.update keyAction keyModel)
             else
-              (keyId, Key.update Key.Release keyModel)
+              (keyId, keyModel)
       in
         (List.map updateKey model, Effects.none)
 
@@ -88,11 +89,15 @@ view address model =
 
 viewKey : Signal.Address Action -> (ID, Key.Model) -> Html
 viewKey address (id, model) =
-  Key.view (Signal.forwardTo address (Press id)) model id
+  Key.view (Signal.forwardTo address (Event id)) model id
 
 -- SIGNALS
-port keyEvents : Signal String
+port keyPresses  : Signal String
+port keyReleases : Signal String
 
 incomingActions : Signal Action
 incomingActions =
-    Signal.map (\keyId -> Press keyId Key.Press) keyEvents
+    let presses  = Signal.map (\keyId -> Event keyId Key.Press) keyPresses
+        releases = Signal.map (\keyId -> Event keyId Key.Release) keyReleases
+    in
+        Signal.merge presses releases

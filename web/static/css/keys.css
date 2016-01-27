@@ -44,3 +44,70 @@
   z-index: 1;
 }
 
+.button-container {
+  margin-top: 40px;
+}
+
+#titanic, #leekspin {
+  height: 60px;
+  width: auto;
+  border-radius: 3px;
+  border: 1px solid #474747;
+}
+
+#titanic:hover, #leekspin:hover {
+  cursor: pointer;
+}
+
+.spintanic {
+  background-image: url('http://i.ytimg.com/vi/Aaj1M5wDigg/maxresdefault.jpg');
+}
+
+.leekspin {
+  background-image: url('https://media.giphy.com/media/AxVvjRKlXx0rGxGMgw/giphy.gif');
+}
+
+.leekspin, .spintanic {
+  position: absolute;
+  z-index: 100;
+  background-size: 100% 200px;
+  height: 200px;
+  width: 200px;
+  -webkit-animation-name: rotate;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+}
+
+.spin-container {
+  position: absolute;
+  z-index: 100;
+  background-size: 100% 200px;
+  height: 200px;
+  width: 200px;
+  -webkit-animation-name: embiggen;
+  -webkit-animation-duration: 4s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+}
+
+@-webkit-keyframes rotate {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes embiggen {
+  0% {
+    -webkit-transform: scale(1);
+  }
+  50% {
+    -webkit-transform: scale(1.5);
+  }
+  100% {
+    -webkit-transform: scale(1);
+  }
+}

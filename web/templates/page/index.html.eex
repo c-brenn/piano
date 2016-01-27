@@ -6,6 +6,10 @@
 <div class="row">
   <div class="col-lg-12">
     <div id="elm-main" class="keyboard"></div>
+    <div class="button-container">
+      <img id="titanic" src="<%= static_path(@conn, "/images/ship.png")%>">
+      <img id="leekspin" src="<%= static_path(@conn, "/images/leek.png")%>">
+    </div>
   </div>
 </div>
 
